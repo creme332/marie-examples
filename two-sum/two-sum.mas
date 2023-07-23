@@ -1,0 +1,153 @@
+/ Two-sum problem
+
+/ input n, k
+input
+store n 
+input
+store k
+
+/ arr_ptr1 = arr_start
+load arr_start
+store arr_ptr1
+
+/ i = 0
+load zero
+store i
+
+/ input n integers to array
+input_loop,     input
+                storei arr_ptr1
+
+                load arr_ptr1
+                add one
+                store arr_ptr1
+
+                / i += 1
+                load i
+                add one
+                store i
+
+                / if i = n, start solving else keep inputting to array
+                subt n 
+                skipcond 400
+                jump input_loop
+                jump solve
+
+solve,          load arr_start
+                store arr_ptr1 / arr_ptr1 = arr_start
+
+                / i = 0
+                load zero
+                store i
+
+                jump outer_loop
+
+outer_loop,     load arr_ptr1
+                
+                / arr_ptr2 = arr_ptr1 + 1
+                add one
+                store arr_ptr2 
+
+                / j = i + 1
+                load i 
+                add 1
+                store j
+                
+                / if j = n, move to end of outer loop
+                / else enter to inner loop
+                subt n 
+                skipcond 400
+                jump inner_loop
+                jump end_outer_loop
+
+                
+end_outer_loop, load i / i += 1
+                add one
+                store i
+
+                / arr_ptr1 = &arr[i] + 1
+                load arr_ptr1
+                add one
+                store arr_ptr1
+
+                / if i = n, no answer found.
+                / else restart outer loop
+                subt n 
+                skipcond 400
+                jump outer_loop
+                jump no_answer   
+
+
+inner_loop,     loadi arr_ptr1 / temp = *arr_ptr1
+                store temp 
+
+                / check if arr[i] + arr[j] = k
+                loadi arr_ptr2
+                add temp
+                subt k
+                skipcond 400
+                jump end_inner_loop
+                jump found_answer
+
+                / j += 1
+end_inner_loop, load j
+                add one
+                store j
+
+                / arr_ptr2 = &arr[j] + 1
+                load arr_ptr2
+                add one
+                store arr_ptr2
+
+                / if j = n, go back to outer loop
+                / else restart inner loop
+                subt n 
+                skipcond 400
+                jump inner_loop
+                jump end_outer_loop
+
+output_array,   load arr_start
+                store arr_ptr1 / arr_ptr1 = arr_start
+
+                / i = 0
+                load zero
+                store i
+
+                jump output_loop
+
+output_loop,    loadi arr_ptr1
+                output
+                load arr_ptr1
+                add one
+                store arr_ptr1
+
+                / i += 1
+                load i
+                add one
+                store i
+
+                subt n 
+                skipcond 400
+                jump output_loop
+
+halt
+
+found_answer,   load i
+                output
+                load j
+                output
+                halt
+
+no_answer,  load zero
+            output
+
+n, dec 0 / array size
+k, dec 0 / target
+temp, dec 0
+i, dec 0 / loop counter
+j, dec 0 / loop counter
+arr_start, hex 100
+arr_ptr1, hex 0
+arr_ptr2, hex 0
+zero, dec 0
+one, dec 1
