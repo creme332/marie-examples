@@ -1,0 +1,62 @@
+    / Fibonacci sequence
+	
+	/ enter value of n
+	input
+	store n
+
+	/ output first element	
+	load prev
+	output
+	
+	/ if n was 1 originally, exit else consider case 2
+	load n
+	subt one
+	store n
+	skipcond 400
+	jump case2
+	halt
+	
+	/ output second element
+case2, load next
+		output
+		/ if n was originally 2, exit else enter loop
+		load n
+		subt one
+		store n
+		skipcond 400
+		jump loop
+		halt
+
+loop,	load n
+		subt one
+		store n
+		
+		/ add prev and next and store to sum
+		load prev
+		add next
+		store sum
+
+		/ output sum
+		output
+
+		/ prev = next
+		load next
+		store prev
+		
+		/ next = sum
+		load sum
+		store next
+		
+
+		/ if n is zero, exit loop else restart
+		load n
+		skipcond 400
+		jump loop
+		halt
+		
+n,	    dec	    1 / how many numbers in sequence to print
+one, 	dec 	1 / constant
+prev, 	dec 	0 / initially set to first element of sequence
+next, 	dec 	1 / intially set to second element of sequence
+sum, 	dec 	0 / temp variable to hold sum of prev and next
+two, 	dec 	2 / constant
