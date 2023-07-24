@@ -80,13 +80,10 @@ end_outer_loop, load i / i += 1
                 jump no_answer   
 
 
-inner_loop,     loadi arr_ptr1 / temp = *arr_ptr1
-                store temp 
-
-                / check if arr[i] + arr[j] = k
-                loadi arr_ptr2
-                add temp
+inner_loop,     loadi arr_ptr1 
+                addi arr_ptr2
                 subt k
+                / check if arr[i] + arr[j] = k
                 skipcond 400
                 jump end_inner_loop
                 jump found_answer
@@ -146,7 +143,6 @@ no_answer,  load zero
 
 n, dec 0 / array size
 k, dec 0 / target
-temp, dec 0
 i, dec 0 / loop counter
 j, dec 0 / loop counter
 arr_start, hex 100
