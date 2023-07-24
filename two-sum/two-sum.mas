@@ -50,11 +50,12 @@ outer_loop,     load arr_ptr1
 
                 / j = i + 1
                 load i 
-                add 1
+                add one
                 store j
                 
                 / if j = n, move to end of outer loop
                 / else enter to inner loop
+                load j
                 subt n 
                 skipcond 400
                 jump inner_loop
@@ -72,6 +73,7 @@ end_outer_loop, load i / i += 1
 
                 / if i = n, no answer found.
                 / else restart outer loop
+                load i
                 subt n 
                 skipcond 400
                 jump outer_loop
@@ -101,6 +103,7 @@ end_inner_loop, load j
 
                 / if j = n, go back to outer loop
                 / else restart inner loop
+                load j
                 subt n 
                 skipcond 400
                 jump inner_loop
@@ -129,8 +132,7 @@ output_loop,    loadi arr_ptr1
                 subt n 
                 skipcond 400
                 jump output_loop
-
-halt
+                halt
 
 found_answer,   load i
                 output
@@ -140,6 +142,7 @@ found_answer,   load i
 
 no_answer,  load zero
             output
+            halt
 
 n, dec 0 / array size
 k, dec 0 / target
