@@ -6,14 +6,6 @@ store n
 input
 store k
 
-/ arr_ptr1 = arr_start
-load arr_start
-store arr_ptr1
-
-/ i = 0
-load zero
-store i
-
 / input n integers to array
 input_loop,     input
                 storei arr_ptr1
@@ -143,10 +135,10 @@ no_answer,  load zero
 
 n, dec 0 / array size
 k, dec 0 / target
-i, dec 0 / loop counter
+i, dec 0 / loop counter. Initial value must be 0.
 j, dec 0 / loop counter
 arr_start, hex 100
-arr_ptr1, hex 0
+arr_ptr1, hex 100 / Initial value must be arr_start.
 arr_ptr2, hex 0
 zero, dec 0
 one, dec 1
