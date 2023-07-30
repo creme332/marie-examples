@@ -19,26 +19,22 @@ input_loop,     input
                 add one
                 store i
 
-                / if i = n, start solving else keep inputting to array
+                / if i = n, start solving else keep inputing to array
                 subt n 
                 skipcond 400
                 jump input_loop
-                jump solve
 
-solve,          load arr_start
-                store arr_ptr1 / arr_ptr1 = arr_start
+/ iniatilisation before start solving
+load arr_start
+store arr_ptr1 / arr_ptr1 = arr_start
 
-                / i = 0
-                load zero
-                store i
-
-                jump outer_loop
+/ i = 0
+load zero
+store i
 
 outer_loop,     load arr_ptr1
-                
-                / arr_ptr2 = arr_ptr1 + 1
                 add one
-                store arr_ptr2 
+                store arr_ptr2  / arr_ptr2 = arr_ptr1 + 1
 
                 / j = i + 1
                 load i 
@@ -50,11 +46,10 @@ outer_loop,     load arr_ptr1
                 load j
                 subt n 
                 skipcond 400
-                jump inner_loop
-                jump end_outer_loop
-
+                jns start_inner_loop
                 
-end_outer_loop, load i / i += 1
+                / end of outer loop
+                load i / i += 1
                 add one
                 store i
 
@@ -69,16 +64,25 @@ end_outer_loop, load i / i += 1
                 subt n 
                 skipcond 400
                 jump outer_loop
-                jump no_answer   
+/ ending of outer loop => no answer
+load zero
+output
+halt
 
-
+start_inner_loop, hex 0
 inner_loop,     loadi arr_ptr1 
                 addi arr_ptr2
                 subt k
                 / check if arr[i] + arr[j] = k
                 skipcond 400
                 jump end_inner_loop
-                jump found_answer
+                
+                / output answer and stop program
+                load i
+                output
+                load j
+                output
+                halt
 
                 / j += 1
 end_inner_loop, load j
@@ -96,42 +100,9 @@ end_inner_loop, load j
                 subt n 
                 skipcond 400
                 jump inner_loop
-                jump end_outer_loop
+                jumpi start_inner_loop
 
-output_array,   load arr_start
-                store arr_ptr1 / arr_ptr1 = arr_start
 
-                / i = 0
-                load zero
-                store i
-
-                jump output_loop
-
-output_loop,    loadi arr_ptr1
-                output
-                load arr_ptr1
-                add one
-                store arr_ptr1
-
-                / i += 1
-                load i
-                add one
-                store i
-
-                subt n 
-                skipcond 400
-                jump output_loop
-                halt
-
-found_answer,   load i
-                output
-                load j
-                output
-                halt
-
-no_answer,  load zero
-            output
-            halt
 
 n, dec 0 / array size
 k, dec 0 / target
