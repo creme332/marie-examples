@@ -1,0 +1,63 @@
+/ enter value of n, where n > 0
+input 
+store n
+
+/ input n integers to array
+input_loop, input 
+            storei arr_ptr
+
+            / point to next array element
+            load arr_ptr
+            add one
+            store arr_ptr
+
+            / i += 1
+            load i
+            add one
+            store i 
+
+            / if i = n, stop
+            subt n
+            skipcond 400
+            jump input_loop
+
+/ initialise variables
+load arr_start
+store arr_ptr
+load zero
+store i
+
+/ calculate sum
+calc_sum,   loadi arr_ptr
+            add sum
+            store sum
+            
+            / move to next array element
+            load arr_ptr
+			add one
+            store arr_ptr
+			
+            / i += 1
+            load i
+            add one
+            store i
+			
+            / if i = n, exit loop
+            subt n 
+            skipcond 400
+            jump calc_sum
+
+load sum
+output
+halt
+
+/ constants
+one, dec 1 
+zero, dec 0 
+n, dec 0 
+arr_start, hex 100 
+
+/ variables
+sum, dec 0
+i, dec 0
+arr_ptr, hex 100
