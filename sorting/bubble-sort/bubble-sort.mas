@@ -1,0 +1,161 @@
+/ enter value of n, where n > 0
+input 
+store n
+
+/ input n integers to array
+input_loop, input 
+            storei arr_ptr1
+
+            / point to next array element
+            load arr_ptr1
+            add one
+            store arr_ptr1
+
+            / i += 1
+            load i
+            add one
+            store i
+
+            / if i = n, stop
+            subt n
+            skipcond 400
+            jump input_loop
+
+main,   load zero
+        store i / i = 0
+        
+        / arr_ptr1 = arr_start
+        load arr_start
+		store arr_ptr1
+
+        jns outer_loop_start
+        
+        jump output_array
+        halt
+
+outer_loop_start, hex 0
+
+outer_loop,     load i
+				/ check if i < n - 1
+				subt n
+                add one
+                Skipcond 000
+                jumpi outer_loop_start
+                
+                / j = 0, swapped = 0
+				load zero
+                store j
+                store swapped
+                
+                load arr_start
+				store arr_ptr2
+                
+                jns start_inner_loop 
+                
+                / check if no swapping took place
+                load swapped 
+                skipcond 800
+                jumpi outer_loop_start / end outer loop
+                / if swapped > 0, 
+                
+                / i += 1
+                load i
+                add one
+                store i
+                
+                load arr_ptr1
+				add one
+                store arr_ptr1
+                
+                jump outer_loop
+
+start_inner_loop, hex 0
+
+inner_loop, load j 
+			/ check if j < n - 1 - i. If so, continue, else go back to outer loop
+            subt n
+            add i
+            add one
+            Skipcond 000
+            jumpi start_inner_loop
+            
+            / get pointer to next element
+            / arr_ptr3 = arr_ptr2 + 1
+			load arr_ptr2
+			add one
+            store arr_ptr3
+            
+            / temp =  arr[j+1]
+            loadi arr_ptr3
+            store temp                       
+            
+            / check if arr[j] < arr[j+1]
+            loadi arr_ptr2
+            subt temp
+            skipcond 000
+            jns start_swap	/ skip swapping if arr[j] <= arr[j+1]
+            
+            / j += 1
+            load j
+            add one
+            store j
+            
+            / update pointer to arr[j]
+            load arr_ptr2
+            add one
+            store arr_ptr2
+            
+            jump inner_loop
+
+
+/ swap elements of array pointed by arr_ptr2 and arr_ptr3
+start_swap, hex 0
+swap, 	loadi arr_ptr2
+		store temp
+        
+        LoadI arr_ptr3
+        storei arr_ptr2
+        
+        load temp
+        storei arr_ptr3
+        
+        / set swapped to 1
+        load one
+        store swapped
+        
+        JumpI start_swap
+            
+
+output_array,   load arr_start
+                store arr_ptr1
+                load zero
+                store i
+
+output_loop,    loadi arr_ptr1
+                output
+
+                load arr_ptr1
+                add one
+                store arr_ptr1
+
+                / i += 1
+                load i
+                add one
+                store i
+
+                subt n
+                skipcond 400
+                jump output_loop
+
+halt
+zero, dec 0
+one, dec 1
+temp, dec 0
+swapped, dec 0
+i, dec 0
+j, dec 0
+n, dec 0
+arr_start, hex 100
+arr_ptr1, hex 100
+arr_ptr2, hex 0
+arr_ptr3, hex 0
