@@ -1,0 +1,53 @@
+/ enter value of n, where n > 0
+input 
+store n
+
+/ input n integers to array
+input_loop, input 
+            storei arr_ptr
+
+            / point to next array element
+            load arr_ptr
+            add one
+            store arr_ptr
+
+            / i += 1
+            load i
+            add one
+            store i
+
+            / if i = n, stop
+            subt n
+            skipcond 400
+            jump input_loop
+
+
+
+output_array,    load arr_start
+                store arr_ptr
+                load zero
+                store i
+
+output_loop,    loadi arr_ptr
+                output
+
+                load arr_ptr
+                add one
+                store arr_ptr
+
+                / i += 1
+                load i
+                add one
+                store i
+
+                subt n
+                skipcond 400
+                jump output_loop
+
+halt
+zero, dec 0
+one, dec 1
+i, dec 0
+n, dec 0
+arr_start, hex 100
+arr_ptr, hex 100
