@@ -1,0 +1,52 @@
+input
+store a
+
+input
+store b
+
+jns call_mult
+load product
+output
+halt
+
+call_mult, hex 0
+mult,	load a
+		subt b
+        
+        / a < b ?
+        skipcond 000
+        Jump mult_loop
+		
+        / swap a and b
+        load a
+        store temp
+        
+        load b
+        store a
+        
+        load temp
+        store b
+        
+mult_loop, 	load i
+			subt b
+            / i < b ?
+            skipcond 000
+            JumpI call_mult
+
+			load product
+            add a / product += a
+            store product
+
+            / i++
+            load i
+            add one
+            store i
+
+            jump mult_loop
+
+one, dec 1
+i, dec 0
+temp, dec 0
+a, dec 0
+b, dec 0
+product, dec 0
