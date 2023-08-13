@@ -4,13 +4,71 @@ store a
 input
 store b
 
-jns call_mult
+jns check_sign
+jns make_a_pos
+jns make_b_pos
+jns mult
+
+/ check true sign of product
+load negative
+Skipcond 400
+jump output_negative_product
+/ Output  positive product
 load product
 output
 halt
+ 
+check_sign, hex 0
+			load a
+			Skipcond 000
+            jump check_sign_given_a_pos/ do if a >= 0
+            
+            / if a < 0
+            load b 
+            Skipcond 000
+            jump set_neg_true / a < 0 and b > 0
+            JumpI check_sign / a < 0 and b < 0
 
-call_mult, hex 0
-mult,	load a
+check_sign_given_a_pos,   	load b 
+            				Skipcond 000
+            				JumpI check_sign / a >= 0 and b >= 0
+            				jump set_neg_true / a >= 0 and b < 0
+
+/ negative = 1 and returns to main
+set_neg_true, 	load one
+				store negative
+                JumpI check_sign
+
+/ a =  abs(a)
+make_a_pos, 	hex 0
+				load a
+				Skipcond 000
+                jumpi make_a_pos
+				load zero
+				subt a
+        		store a
+                jumpi make_a_pos
+                
+/ b = abs(b)
+make_b_pos, 	hex 0
+				load b
+				skipcond 000
+                jumpi make_b_pos
+				load zero
+				subt b
+                store b
+                jumpi make_b_pos
+ 
+output_negative_product,	load zero
+                            Subt  product
+                            store product
+                            output
+                            halt
+					
+
+/ performs product = abs(a) * abs(b), where abs(a) >= abs(b)            
+mult,	hex 0
+		load a
 		subt b
         
         / a < b ?
@@ -31,7 +89,7 @@ mult_loop, 	load i
 			subt b
             / i < b ?
             skipcond 000
-            JumpI call_mult
+            JumpI mult
 
 			load product
             add a / product += a
@@ -44,7 +102,9 @@ mult_loop, 	load i
 
             jump mult_loop
 
-one, dec 1
+negative, dec 0 / initially false. 
+one, dec 1 
+zero, dec 0
 i, dec 0
 temp, dec 0
 a, dec 0
