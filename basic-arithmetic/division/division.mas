@@ -1,0 +1,132 @@
+input 
+store dividend
+
+input 
+store divisor
+skipcond 400
+jump main
+Halt
+
+main, 	jns check_sign / determine sign of quotient
+
+		/ calculate abs(dividend) / abs(divisor)
+		jns make_dvd_pos
+		jns make_div_pos
+		jns call_loop
+        
+        / update remainder
+        add divisor
+        store remainder
+        
+        jns output_quotient
+		jns output_remainder
+        halt
+
+output_quotient,    hex 0
+					load negative
+					Skipcond 400
+        			jump output_neg_quotient
+                    / output postitive quotient
+        			load quotient
+       				output
+                    jumpi output_quotient
+
+output_neg_quotient, 	load zero
+						Subt quotient
+                        subt one
+						store quotient
+						Output
+						JumpI output_quotient
+                        
+output_remainder, 	hex 0
+					load negative
+					Skipcond 400
+        			jump output_neg_remainder
+                    / if quotient positive, output positive remainder
+					load remainder
+                    Output
+					JumpI output_remainder
+
+output_neg_remainder, 	load zero
+						Subt remainder
+                        add divisor
+						store remainder
+						Output
+						JumpI output_remainder
+                    
+check_sign, hex 0
+			load dividend
+			Skipcond 000
+            jump check_sign_given_dvd_pos/ do if a >= 0
+            
+            / if dividend < 0, check if divisor < 0
+            load divisor 
+            Skipcond 000
+            jump set_neg_true / a < 0 and b > 0
+            JumpI check_sign / a < 0 and b < 0
+
+check_sign_given_dvd_pos,   	load divisor 
+            					Skipcond 000
+            					JumpI check_sign / a >= 0 and b >= 0
+                                jump set_neg_true / a >= 0 and b < 0
+
+/ negative = 1 and returns to main
+set_neg_true, 	load one
+				store negative
+                JumpI check_sign
+
+make_dvd_pos, 	hex 0
+				load dividend
+				Skipcond 000
+                jumpi make_dvd_pos
+                
+                / dividend = - dividend
+				load zero
+				subt dividend
+        		store dividend
+                
+                jumpi make_dvd_pos
+                
+make_div_pos, 	hex 0
+				load divisor
+				Skipcond 000
+                jumpi make_div_pos
+                
+                / divisor = - divisor
+				load zero
+				subt divisor
+        		store divisor
+                
+                jumpi make_div_pos
+                
+call_loop, hex 0
+loop, 	load dividend
+		subt divisor
+        
+        / dividend - divisor > 0
+		Skipcond 800
+        jns check_acc_eq_zero
+  
+        / dividend = dividend - divisor
+        store dividend
+        
+        / quotient += 1
+		load quotient	
+        add one
+        store quotient
+        
+        jump loop
+
+check_acc_eq_zero, 	hex 0
+					Skipcond 400
+					jumpi call_loop / end loop if acc < 0
+                    jumpi check_acc_eq_zero
+
+
+negative, dec 0
+one, dec 1
+zero, dec 0
+remainder, dec 0
+quotient, dec 0
+dividend, dec 0
+divisor, dec 0
