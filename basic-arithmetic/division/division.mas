@@ -17,8 +17,8 @@ main, 	jns check_sign / determine sign of quotient
 		jns make_dvs_pos
 		jns call_loop
     
-        jns abc
-		jns both_dvd_and_dvs_neg
+        jns deal_with_negative_quotient
+		jns deal_with_positive_quotient
         
 		/ output quotient
 		load quotient
@@ -31,57 +31,56 @@ main, 	jns check_sign / determine sign of quotient
         halt
 
 / both original dividend and divisor were negative.
-both_dvd_and_dvs_neg,	hex 0
-						/ verify that both dividend and divisor were negative
-						load negative
-						Skipcond 400
-                        jumpi both_dvd_and_dvs_neg
+deal_with_positive_quotient,	hex 0
+								/ verify that both dividend and divisor were negative
+								load negative
+								Skipcond 400
+								jumpi deal_with_positive_quotient
 
-						load dvd_copy
-        				skipcond 000
-                        jumpi both_dvd_and_dvs_neg
+								load dvd_copy
+								skipcond 000
+								jumpi deal_with_positive_quotient
+								
+								/ quotient + 1
+								load quotient
+								add one
+								store quotient
+								
+								/ remainder = divisor - remainder
+								load divisor
+								subt remainder
+								store remainder
+								
+								jumpi deal_with_positive_quotient
                         
-                        / quotient + 1
-                        load quotient
-                        add one
-                        store quotient
-                        
-                        / remainder = divisor - remainder
-                        load divisor
-						subt remainder
-                        store remainder
-                        
-                        jumpi both_dvd_and_dvs_neg
-                        
-abc, hex 0		
-update_on_negative,  load zero
-					load negative
-					skipcond 800 / if not negative, go back to main and output positive value
-					jumpi abc
+deal_with_negative_quotient, 	hex 0
+								load negative
+								skipcond 800 / if not negative, go back to main and output positive value
+								jumpi deal_with_negative_quotient
 
-					/ quotient = - quotient
-					load zero
-					subt quotient
-					store quotient
+								/ quotient = - quotient
+								load zero
+								subt quotient
+								store quotient
 
-					/ if original dividend < 0, 
-					load dvd_copy
-					skipcond 000 / original dividend > 0
-					jumpi abc
+								/ if original dividend < 0, 
+								load dvd_copy
+								skipcond 000 / original dividend > 0
+								jumpi deal_with_negative_quotient
 
-					/ if original dividend < 0, 
+								/ if original dividend < 0, 
 
-					/ quotient --
-					load quotient
-					subt one
-					store quotient
+								/ quotient --
+								load quotient
+								subt one
+								store quotient
 
-					/ remainder = divisor - remainder
-					load divisor
-					subt remainder
-					store remainder
+								/ remainder = divisor - remainder
+								load divisor
+								subt remainder
+								store remainder
 
-					jumpi abc
+								jumpi deal_with_negative_quotient
                  
 check_sign, hex 0
 			load dividend
