@@ -1,8 +1,11 @@
 input 
 store dividend
+store dvd_copy
 
 input 
 store divisor
+
+/ if divisor = 0, halt
 skipcond 400
 jump main
 Halt
@@ -11,53 +14,79 @@ main, 	jns check_sign / determine sign of quotient
 
 		/ calculate abs(dividend) / abs(divisor)
 		jns make_dvd_pos
-		jns make_div_pos
+		jns make_dvs_pos
 		jns call_loop
+    
+        jns abc
+		jns both_dvd_and_dvs_neg
         
-        / update remainder
-        add divisor
-        store remainder
-        
-        jns output_quotient
-		jns output_remainder
+		/ output quotient
+		load quotient
+		output
+
+		/ output remainder
+		load remainder
+		output
+
         halt
 
-output_quotient,    hex 0
-					load negative
-					Skipcond 400
-        			jump output_neg_quotient
-                    / output postitive quotient
-        			load quotient
-       				output
-                    jumpi output_quotient
+/ both original dividend and divisor were negative.
+both_dvd_and_dvs_neg,	hex 0
+						/ verify that both dividend and divisor were negative
+						load negative
+						Skipcond 400
+                        jumpi both_dvd_and_dvs_neg
 
-output_neg_quotient, 	load zero
-						Subt quotient
-                        subt one
-						store quotient
-						Output
-						JumpI output_quotient
+						load dvd_copy
+        				skipcond 000
+                        jumpi both_dvd_and_dvs_neg
                         
-output_remainder, 	hex 0
+                        / quotient + 1
+                        load quotient
+                        add one
+                        store quotient
+                        
+                        / remainder = divisor - remainder
+                        load divisor
+						subt remainder
+                        store remainder
+                        
+                        jumpi both_dvd_and_dvs_neg
+                        
+abc, hex 0		
+update_on_negative,  load zero
 					load negative
-					Skipcond 400
-        			jump output_neg_remainder
-                    / if quotient positive, output positive remainder
-					load remainder
-                    Output
-					JumpI output_remainder
+					skipcond 800 / if not negative, go back to main and output positive value
+					jumpi abc
 
-output_neg_remainder, 	load zero
-						Subt remainder
-                        add divisor
-						store remainder
-						Output
-						JumpI output_remainder
-                    
+					/ quotient = - quotient
+					load zero
+					subt quotient
+					store quotient
+
+					/ if original dividend < 0, 
+					load dvd_copy
+					skipcond 000 / original dividend > 0
+					jumpi abc
+
+					/ if original dividend < 0, 
+
+					/ quotient --
+					load quotient
+					subt one
+					store quotient
+
+					/ remainder = divisor - remainder
+					load divisor
+					subt remainder
+					store remainder
+
+					jumpi abc
+                 
 check_sign, hex 0
 			load dividend
 			Skipcond 000
-            jump check_sign_given_dvd_pos/ do if a >= 0
+            jump check_sign_given_dvd_pos / do if a >= 0
             
             / if dividend < 0, check if divisor < 0
             load divisor 
@@ -87,27 +116,29 @@ make_dvd_pos, 	hex 0
                 
                 jumpi make_dvd_pos
                 
-make_div_pos, 	hex 0
+make_dvs_pos, 	hex 0
 				load divisor
 				Skipcond 000
-                jumpi make_div_pos
+                jumpi make_dvs_pos
                 
                 / divisor = - divisor
 				load zero
 				subt divisor
         		store divisor
                 
-                jumpi make_div_pos
+                jumpi make_dvs_pos
                 
 call_loop, hex 0
 loop, 	load dividend
 		subt divisor
-        
-        / dividend - divisor > 0
+        add one
+
+        / check if dividend - divisor >= 0 (or > -1)
 		Skipcond 800
-        jns check_acc_eq_zero
+        jump end_loop
   
-        / dividend = dividend - divisor
+        / dividend -= divisor
+		subt one
         store dividend
         
         / quotient += 1
@@ -117,16 +148,16 @@ loop, 	load dividend
         
         jump loop
 
-check_acc_eq_zero, 	hex 0
-					Skipcond 400
-					jumpi call_loop / end loop if acc < 0
-                    jumpi check_acc_eq_zero
+end_loop,	subt one / remove the extra one added when checking if loop should end
+			add divisor
+        	store remainder
+			jumpi call_loop / end loop if acc < 0
 
-
-negative, dec 0
-one, dec 1
-zero, dec 0
+negative, dec 0 / boolean. if 1, quotient must be negative. else, quotient positive.
+one, dec 1 / constant
+zero, dec 0 / constant
 remainder, dec 0
 quotient, dec 0
 dividend, dec 0
+dvd_copy, dec 0
 divisor, dec 0
