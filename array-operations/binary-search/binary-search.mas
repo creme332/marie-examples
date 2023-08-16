@@ -1,0 +1,160 @@
+/ enter value of n, where n > 0
+input 
+store n
+
+/ enter target
+input
+store x
+
+main,   jns input_array
+        
+        / i = zero
+        load zero
+        store i 
+        
+        / jump = n
+        load n 
+        store jump
+
+        jns enter_for_loop
+        jns output_index
+        
+        /jns output_array
+        halt
+
+/ input n integers to array
+input_array, hex 0
+input_loop, input 
+            storei arr_ptr
+
+            / point to next array element
+            load arr_ptr
+            add one
+            store arr_ptr
+
+            / i += 1
+            load i
+            add one
+            store i
+
+            / if i = n, stop
+            subt n
+            skipcond 400
+            jump input_loop
+            jumpi input_array
+
+/ find greatest integer p such that 2p - jump <= 0
+half_jump, 	hex 0
+			/ p = jump
+			load jump
+            store p
+            
+            jns return_p
+            load p 
+            store jump
+            jumpi half_jump
+            
+return_p, hex 0
+half_jump_loop, load p
+				add p
+                subt jump
+                
+                / 2p - jump > 0?
+                Skipcond 800
+                jumpi return_p
+                
+                / p--
+                load p
+                subt one
+                store p
+                jump half_jump_loop
+
+enter_for_loop, hex 0
+for_loop,  jns half_jump
+
+            skipcond 800
+            jumpi enter_for_loop
+
+            / j > 0
+            jns enter_while_loop
+            jump for_loop
+
+enter_while_loop, hex 0
+while_loop, load i 
+            add jump 
+            subt n
+            
+            / check if i + jump < n
+            skipcond 000
+            jumpi enter_while_loop
+
+            / load arr[i+jump]
+            load arr_start
+            add i 
+            add jump 
+            store arr_ptr
+            loadi arr_ptr
+
+            / check if arr[i+jump] <= x
+            subt x
+            subt one
+
+            skipcond 000
+            jumpi enter_while_loop
+
+            / if yes, i+= jump
+            load i 
+            add jump
+            store i 
+
+            / restart loop
+            jump while_loop
+
+output_index, hex 0
+                / check if arr[i] == x
+                load arr_start
+                add i 
+                store arr_ptr
+                loadi arr_ptr
+                subt x
+                skipcond 400
+                halt / if no, halt
+                / if yes, output i
+                load i
+                output
+                jumpi output_index
+
+output_array,   hex 0 
+                load arr_start
+                store arr_ptr
+                load zero
+                store i
+                jump output_loop
+
+output_loop,    loadi arr_ptr
+                output
+
+                load arr_ptr
+                add one
+                store arr_ptr
+
+                / i += 1
+                load i
+                add one
+                store i
+
+                subt n
+                skipcond 400
+                jump output_loop
+                jumpi output_array
+
+halt
+zero, dec 0
+jump, dec 0
+x, dec 0
+one, dec 1
+i, dec 0
+n, dec 0
+arr_start, hex 100
+arr_ptr, hex 100
+p, dec 0
