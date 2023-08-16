@@ -1,0 +1,50 @@
+input 
+store a
+
+input
+store b
+
+gcd,    load b
+        subt a
+        skipcond 000
+        jns swap_a_b
+
+        load a 
+        skipcond 800
+        halt / if a = 0, halt
+
+        / given a != 0
+        load b 
+        skipcond 400
+		jump rec_gcd / call gcd(a-b, b)
+        
+        / if b = 0, return a
+        load a
+        output
+        halt
+
+/ recursively call gcd(a-b, b)
+rec_gcd,    load a 
+            subt b 
+            store a
+            jump gcd
+
+swap_a_b,   hex 0
+            
+            / temp = a
+            load a 
+            store temp
+            
+            / a = b 
+            load b 
+            store a 
+            
+            / b = temp
+            load temp 
+            store b 
+            jumpi swap_a_b
+    
+temp, dec 0
+a, dec 0
+b, dec 0
+ans, dec 0
