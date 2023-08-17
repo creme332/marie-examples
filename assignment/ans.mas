@@ -14,10 +14,9 @@ main,   jns input_arr
 
         jns output_min_max_product
 
+        jns output_median
+
         halt
-
-
-
 
 / input n integers to array
 input_arr, hex 0
@@ -40,6 +39,7 @@ input_loop, input
             jump input_loop
             jumpi input_arr
 
+/ START OF BUBBLE SORT
 bubble_sort,    hex  0
                 load zero
                 store i / i = 0
@@ -143,7 +143,9 @@ swap, 	loadi arr_ptr2
         
         JumpI start_swap
             
+/ END OF BUBBLE SORT
 
+/ START OF OUTPUT ARRAY
 output_array,   hex 0
                 load arr_start
                 store arr_ptr1
@@ -166,6 +168,7 @@ output_loop,    loadi arr_ptr1
                 skipcond 400
                 jump output_loop
                 jumpi output_array
+/ END OF OUTPUT ARRAY
 
 / START FOR MULTIPLICATION
 output_min_max_product, hex 0
@@ -174,7 +177,7 @@ output_min_max_product, hex 0
                         jns get_arr_min_max
 
 
-                        jns check_sign
+                        jns check_product_sign
                         jns make_a_pos
                         jns make_b_pos
                         
@@ -211,7 +214,7 @@ get_arr_min_max,    hex 0
                     jumpi get_arr_min_max
 
 
-check_sign, hex 0
+check_product_sign, hex 0
 			load a
 			Skipcond 000
             jump check_sign_given_a_pos/ do if a >= 0
@@ -220,17 +223,17 @@ check_sign, hex 0
             load b 
             Skipcond 000
             jump set_neg_true / a < 0 and b > 0
-            JumpI check_sign / a < 0 and b < 0
+            JumpI check_product_sign / a < 0 and b < 0
 
 check_sign_given_a_pos,   	load b 
             				Skipcond 000
-            				JumpI check_sign / a >= 0 and b >= 0
+            				JumpI check_product_sign / a >= 0 and b >= 0
             				jump set_neg_true / a >= 0 and b < 0
 
 / negative = 1 and returns to main
 set_neg_true, 	load one
 				store negative
-                JumpI check_sign
+                JumpI check_product_sign
 
 / a =  abs(a)
 make_a_pos, 	hex 0
@@ -296,19 +299,37 @@ mult_loop, 	load i
             jump mult_loop
 
 / END FOR MULTIPLICATION
-temp, dec 0
-a, dec 0
-b, dec 0
-product, dec 0
-negative, dec 0 / initially false. 
+
+output_median,  hex 0
+                / reset negative
+                clear 
+                store negative
+
+                / calculate (n div 2)
+                / remainder and quotient are also calculated
+
+                jumpi output_median
+
+
+/ constants
 zero, dec 0
 one, dec 1
+n, dec 0 / size of array
+arr_start, hex 400 / start of array
 
-swapped, dec 0
+/ variables
+temp, dec 0 / a variable for temporary storage
+a, dec 0 / multiplier
+b, dec 0 / multiplicand
+product, dec 0 / stores product of minimum and maximum value of array
+negative, dec 0 / Indicates whether product should be positive or negative. Initially false. 
+swapped, dec 0 / Indicates whether a swap was performed in inner loop of bubble sort
+
+/ loop counters
 i, dec 0
 j, dec 0
-n, dec 0 / size of array. constant
-arr_start, hex 400 / ! start of array. may need to be increased depending on size of program.
-arr_ptr1, hex 400  / ! pointer of array. initial value = start of array. may need to be increased depending on size of program.
+
+/ array pointers
+arr_ptr1, hex 400  / pointer of array. initial value = start of array
 arr_ptr2, hex 0
 arr_ptr3, hex 0

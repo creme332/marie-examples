@@ -1,0 +1,1 @@
+- does not work for array of size 1
