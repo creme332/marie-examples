@@ -10,10 +10,10 @@ main,   jns input_arr
 
         jns bubble_sort
 
-        jns output_array
+        /jns output_array
 		
-        load space
-		output
+        /load space
+		/output
         /jns output_min_max_product
 
         jns output_median
@@ -322,36 +322,16 @@ output_median,  hex 0
                 /load remainder
                 /output
 
-                / if remainder = 1, output middle element of array. Else output average
+                / if remainder = 1, mediam is middle element of array.
+                / Else median is average of middle elements
                 load remainder
                 subt one
                 skipcond 400
-                jns output_array_middle_avg
-                jns output_array_middle
+                jump output_array_middle_avg
+                jump output_array_middle
 
-                jumpi output_median
-
-/ calculate abs(dividend) / abs(divisor) and saves result to quotient, remainder variables.
-division_calculator,   hex 0
-                        / reset negative
-                        clear 
-                        store negative
-
-                        / determine sign of quotient
-                        jns check_division_sign 
-
-                        jns make_dvd_pos
-                        jns make_dvs_pos
-                        jns perform_division
-                    
-                        jns deal_with_negative_quotient
-                        jns deal_with_positive_quotient
-
-                        jumpi division_calculator
-
-output_array_middle_avg, hex 0
+output_array_middle_avg, load arr_start
                         / temp = arr[quotient]
-                        load arr_start
                         add quotient
                         store arr_ptr1
                         loadi arr_ptr1
@@ -367,10 +347,15 @@ output_array_middle_avg, hex 0
                         / temp = arr[quotient] + arr[quotient - 1]
                         add temp
                         
-                        / calculate temp/2
+                        / we need to calculate quotient and remainder of calculate temp/2
+                        
+                        / dividend = temp
                         store dividend
+                        
+                        / divisor = 2
                         load two
                         store divisor
+
                         jns division_calculator
 
                         / output quotient
@@ -380,22 +365,47 @@ output_array_middle_avg, hex 0
                         / output remainder if > 0
                         load remainder
                         Skipcond 800
-						jumpi output_array_middle_avg
+						jumpi output_median
+
                         output
-
-                        jumpi output_array_middle_avg
-
+                        jumpi output_median
 
 
-output_array_middle,    hex 0
-                        load arr_start
+/ output median of array, given that array has odd size
+output_array_middle,    load arr_start
                         add quotient
                         store arr_ptr1
 
                         loadi arr_ptr1
                         output
 
-                        jumpi output_array_middle
+                        jumpi output_median
+
+/ calculate abs(dividend) / abs(divisor) and saves result to quotient, remainder variables.
+/ Assume divisor non-zero.
+division_calculator,   	hex 0
+                        / reset negative, quotient, remainder
+                        clear 
+                        store quotient
+						store remainder
+                        store negative
+                        
+                        / make a copy of dividend
+                        load dividend
+                        store dvd_copy
+
+                        / determine sign of quotient
+                        jns check_division_sign 
+
+                        jns make_dvd_pos
+                        jns make_dvs_pos
+                        jns perform_division
+                    
+                        jns deal_with_negative_quotient
+                        jns deal_with_positive_quotient
+
+                        jumpi division_calculator
+
 / both original dividend and divisor were negative.
 deal_with_positive_quotient,	hex 0
 								/ verify that both dividend and divisor were negative
@@ -547,4 +557,3 @@ j, dec 0
 arr_ptr1, hex 400  / pointer of array. initial value = start of array
 arr_ptr2, hex 0
 arr_ptr3, hex 0
-
