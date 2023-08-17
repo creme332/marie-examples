@@ -357,6 +357,10 @@ output_array_middle_avg, load arr_start
 
                         jns division_calculator
 
+                        / check if remainder = 2
+                        jns deal_with_remainder_two
+
+
                         / output quotient
                         load quotient
                         output
@@ -368,6 +372,23 @@ output_array_middle_avg, load arr_start
 
                         output
                         jumpi output_median
+
+deal_with_remainder_two, hex 0
+                        load remainder
+                        subt two
+                        skipcond 400
+                        jumpi deal_with_remainder_two  
+
+                        / increment quotient
+                        load quotient
+                        add one
+                        store quotient
+
+                        / reset remainder
+                        clear
+                        store remainder
+
+                        jumpi deal_with_remainder_two  
 
 
 / output median of array, given that array has odd size
