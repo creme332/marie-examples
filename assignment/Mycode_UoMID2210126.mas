@@ -6,15 +6,13 @@ store n
 
 main,   jns input_arr
 
-        /jns output_array
+        jns output_array
 
         jns bubble_sort
 
-        /jns output_array
-		
-        /load space
-		/output
-        /jns output_min_max_product
+        jns output_array
+
+        jns output_min_max_product
 
         jns output_median
 
@@ -302,6 +300,7 @@ mult_loop, 	load i
 
 / END FOR MULTIPLICATION
 
+/ START FOR MEDIAN
 output_median,  hex 0
                 / dividend = n
                 load n 
@@ -479,6 +478,7 @@ set_dneg_true, 	load one
 				store negative
                 JumpI check_division_sign
 
+/ dividend = abs(dividend)
 make_dvd_pos, 	hex 0
 				load dividend
 				Skipcond 000
@@ -490,7 +490,8 @@ make_dvd_pos, 	hex 0
         		store dividend
                 
                 jumpi make_dvd_pos
-                
+
+/ divisor = abs(divisor)         
 make_dvs_pos, 	hex 0
 				load divisor
 				Skipcond 000
@@ -510,7 +511,7 @@ division_loop, 	load dividend
 
                 / check if dividend - divisor >= 0 (or > -1)
                 Skipcond 800
-                jump end_loop
+                jump end_division_loop
         
                 / dividend -= divisor
                 subt one
@@ -523,10 +524,12 @@ division_loop, 	load dividend
                 
                 jump division_loop
 
-end_loop,	subt one / remove the extra one added when checking if loop should end
-			add divisor
-        	store remainder
-			jumpi perform_division / end loop if acc < 0
+end_division_loop,	subt one / remove the extra one added when checking if loop should end
+                    add divisor
+                    store remainder
+                    jumpi perform_division / end loop if acc < 0
+
+/ END FOR MEDIAN
 
 / constants
 zero, dec 0
@@ -534,7 +537,6 @@ one, dec 1
 two, dec 2
 n, dec 0 / size of array
 arr_start, hex 400 / start of array
-space, dec 9999
 
 / variables
 temp, dec 0 / a variable for temporary storage
