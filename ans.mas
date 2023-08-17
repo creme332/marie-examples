@@ -1,14 +1,18 @@
+/ MARIE Practical Test 17 August 2023
+
 / enter value of n, where n > 0
 input 
 store n
 
 main,   jns input_arr
 
-        jns output_array
+        /jns output_array
 
         jns bubble_sort
 
         jns output_array
+
+        jns output_min_max_product
 
         halt
 
@@ -163,14 +167,148 @@ output_loop,    loadi arr_ptr1
                 jump output_loop
                 jumpi output_array
 
+/ START FOR MULTIPLICATION
+output_min_max_product, hex 0
+
+                        / initialise a, b to min and max elements of array
+                        jns get_arr_min_max
+
+
+                        jns check_sign
+                        jns make_a_pos
+                        jns make_b_pos
+                        
+
+                        / i = 0
+                        clear
+                        store i
+                        
+                        jns mult
+
+                        / check true sign of product
+                        load negative
+                        Skipcond 400
+                        jump output_negative_product
+
+                        / Output  positive product
+                        load product
+                        output
+                        jumpi output_min_max_product
+
+/ a = arr[0] and b = arr[n-1]
+get_arr_min_max,    hex 0
+					loadi arr_start                    
+                    store a
+
+                    load arr_start
+                    add n
+                    subt one
+                    store arr_ptr1
+
+                    loadi arr_ptr1
+                    store b
+
+                    jumpi get_arr_min_max
+
+
+check_sign, hex 0
+			load a
+			Skipcond 000
+            jump check_sign_given_a_pos/ do if a >= 0
+            
+            / if a < 0
+            load b 
+            Skipcond 000
+            jump set_neg_true / a < 0 and b > 0
+            JumpI check_sign / a < 0 and b < 0
+
+check_sign_given_a_pos,   	load b 
+            				Skipcond 000
+            				JumpI check_sign / a >= 0 and b >= 0
+            				jump set_neg_true / a >= 0 and b < 0
+
+/ negative = 1 and returns to main
+set_neg_true, 	load one
+				store negative
+                JumpI check_sign
+
+/ a =  abs(a)
+make_a_pos, 	hex 0
+				load a
+				Skipcond 000
+                jumpi make_a_pos
+				load zero
+				subt a
+        		store a
+                jumpi make_a_pos
+                
+/ b = abs(b)
+make_b_pos, 	hex 0
+				load b
+				skipcond 000
+                jumpi make_b_pos
+				load zero
+				subt b
+                store b
+                jumpi make_b_pos
+ 
+output_negative_product,	load zero
+                            Subt  product
+                            store product
+                            output
+                            jumpi output_min_max_product
+					
+
+/ performs product = abs(a) * abs(b), where abs(a) >= abs(b)            
+mult,	hex 0
+		load a
+		subt b
+        
+        / a < b ?
+        skipcond 000
+        Jump mult_loop
+		
+        / swap a and b
+        load a
+        store temp
+        
+        load b
+        store a
+        
+        load temp
+        store b
+        
+mult_loop, 	load i
+			subt b
+            / i < b ?
+            skipcond 000
+            JumpI mult
+
+			load product
+            add a / product += a
+            store product
+
+            / i++
+            load i
+            add one
+            store i
+
+            jump mult_loop
+
+/ END FOR MULTIPLICATION
+temp, dec 0
+a, dec 0
+b, dec 0
+product, dec 0
+negative, dec 0 / initially false. 
 zero, dec 0
 one, dec 1
-temp, dec 0
+
 swapped, dec 0
 i, dec 0
 j, dec 0
-n, dec 0
-arr_start, hex 100
-arr_ptr1, hex 100
+n, dec 0 / size of array. constant
+arr_start, hex 400 / ! start of array. may need to be increased depending on size of program.
+arr_ptr1, hex 400  / ! pointer of array. initial value = start of array. may need to be increased depending on size of program.
 arr_ptr2, hex 0
 arr_ptr3, hex 0
