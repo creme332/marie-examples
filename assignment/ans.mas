@@ -11,8 +11,10 @@ main,   jns input_arr
         jns bubble_sort
 
         jns output_array
-
-        jns output_min_max_product
+		
+        load space
+		output
+        /jns output_min_max_product
 
         jns output_median
 
@@ -301,21 +303,228 @@ mult_loop, 	load i
 / END FOR MULTIPLICATION
 
 output_median,  hex 0
-                / reset negative
-                clear 
-                store negative
+                / dividend = n
+                load n 
+                store dividend
 
-                / calculate (n div 2)
-                / remainder and quotient are also calculated
+                / divisor = 2
+                load two
+                store divisor
+
+                / We need to calculate the quotient and remainder of (n div 2)
+                jns division_calculator
+
+                / output quotient
+                /load quotient
+                /output
+
+                / output remainder
+                /load remainder
+                /output
+
+                / if remainder = 1, output middle element of array. Else output average
+                load remainder
+                subt one
+                skipcond 400
+                jns output_array_middle_avg
+                jns output_array_middle
 
                 jumpi output_median
 
+/ calculate abs(dividend) / abs(divisor) and saves result to quotient, remainder variables.
+division_calculator,   hex 0
+                        / reset negative
+                        clear 
+                        store negative
+
+                        / determine sign of quotient
+                        jns check_division_sign 
+
+                        jns make_dvd_pos
+                        jns make_dvs_pos
+                        jns perform_division
+                    
+                        jns deal_with_negative_quotient
+                        jns deal_with_positive_quotient
+
+                        jumpi division_calculator
+
+output_array_middle_avg, hex 0
+                        / temp = arr[quotient]
+                        load arr_start
+                        add quotient
+                        store arr_ptr1
+                        loadi arr_ptr1
+                        store temp
+
+                        / load arr[quotient - 1]
+                        load arr_start
+                        add quotient
+                        subt one
+                        store arr_ptr1
+                        loadi arr_ptr1
+
+                        / temp = arr[quotient] + arr[quotient - 1]
+                        add temp
+                        
+                        / calculate temp/2
+                        store dividend
+                        load two
+                        store divisor
+                        jns division_calculator
+
+                        / output quotient
+                        load quotient
+                        output
+
+                        / output remainder if > 0
+                        load remainder
+                        Skipcond 800
+						jumpi output_array_middle_avg
+                        output
+
+                        jumpi output_array_middle_avg
+
+
+
+output_array_middle,    hex 0
+                        load arr_start
+                        add quotient
+                        store arr_ptr1
+
+                        loadi arr_ptr1
+                        output
+
+                        jumpi output_array_middle
+/ both original dividend and divisor were negative.
+deal_with_positive_quotient,	hex 0
+								/ verify that both dividend and divisor were negative
+								load negative
+								Skipcond 400
+								jumpi deal_with_positive_quotient
+
+								load dvd_copy
+								skipcond 000
+								jumpi deal_with_positive_quotient
+								
+								/ quotient + 1
+								load quotient
+								add one
+								store quotient
+								
+								/ remainder = divisor - remainder
+								load divisor
+								subt remainder
+								store remainder
+								
+								jumpi deal_with_positive_quotient
+                        
+deal_with_negative_quotient, 	hex 0
+								load negative
+								skipcond 800 / if not negative, go back to main and output positive value
+								jumpi deal_with_negative_quotient
+
+								/ quotient = - quotient
+								load zero
+								subt quotient
+								store quotient
+
+								/ if original dividend < 0, 
+								load dvd_copy
+								skipcond 000 / original dividend > 0
+								jumpi deal_with_negative_quotient
+
+								/ if original dividend < 0, 
+
+								/ quotient --
+								load quotient
+								subt one
+								store quotient
+
+								/ remainder = divisor - remainder
+								load divisor
+								subt remainder
+								store remainder
+
+								jumpi deal_with_negative_quotient
+                 
+check_division_sign,    hex 0
+                        load dividend
+                        Skipcond 000
+                        jump check_sign_given_dvd_pos / do if a >= 0
+                        
+                        / if dividend < 0, check if divisor < 0
+                        load divisor 
+                        Skipcond 000
+                        jump set_dneg_true / a < 0 and b > 0
+                        JumpI check_division_sign / a < 0 and b < 0
+
+check_sign_given_dvd_pos,   	load divisor 
+            					Skipcond 000
+            					JumpI check_division_sign / a >= 0 and b >= 0
+                                jump set_dneg_true / a >= 0 and b < 0
+
+/ negative = 1 and returns to main
+set_dneg_true, 	load one
+				store negative
+                JumpI check_division_sign
+
+make_dvd_pos, 	hex 0
+				load dividend
+				Skipcond 000
+                jumpi make_dvd_pos
+                
+                / dividend = - dividend
+				load zero
+				subt dividend
+        		store dividend
+                
+                jumpi make_dvd_pos
+                
+make_dvs_pos, 	hex 0
+				load divisor
+				Skipcond 000
+                jumpi make_dvs_pos
+                
+                / divisor = - divisor
+				load zero
+				subt divisor
+        		store divisor
+                
+                jumpi make_dvs_pos
+                
+perform_division, hex 0
+division_loop, 	load dividend
+                subt divisor
+                add one
+
+                / check if dividend - divisor >= 0 (or > -1)
+                Skipcond 800
+                jump end_loop
+        
+                / dividend -= divisor
+                subt one
+                store dividend
+                
+                / quotient += 1
+                load quotient	
+                add one
+                store quotient
+                
+                jump division_loop
+
+end_loop,	subt one / remove the extra one added when checking if loop should end
+			add divisor
+        	store remainder
+			jumpi perform_division / end loop if acc < 0
 
 / constants
 zero, dec 0
 one, dec 1
+two, dec 2
 n, dec 0 / size of array
 arr_start, hex 400 / start of array
+space, dec 9999
 
 / variables
 temp, dec 0 / a variable for temporary storage
@@ -324,6 +533,11 @@ b, dec 0 / multiplicand
 product, dec 0 / stores product of minimum and maximum value of array
 negative, dec 0 / Indicates whether product should be positive or negative. Initially false. 
 swapped, dec 0 / Indicates whether a swap was performed in inner loop of bubble sort
+remainder, dec 0
+quotient, dec 0
+dividend, dec 0
+dvd_copy, dec 0
+divisor, dec 0
 
 / loop counters
 i, dec 0
@@ -333,3 +547,4 @@ j, dec 0
 arr_ptr1, hex 400  / pointer of array. initial value = start of array
 arr_ptr2, hex 0
 arr_ptr3, hex 0
+
