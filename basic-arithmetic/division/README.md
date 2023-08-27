@@ -1,9 +1,14 @@
 # Division
 
-Take as input two integers `dividend` and `divisor`, and output the `quotient` and `remainder`, where `remainder` >= 0.
+Input two integers `dividend` and `divisor`, and output the `quotient` and `remainder` when `dividend` is divided by `divisor`.
+
+Note: 0 <= `remainder` < `divisor`.
+
 ## Test cases
 
-### Zero remainder
+### Remainder = 0
+#### Positive quotient
+Input:
 ```
 100
 10
@@ -12,6 +17,18 @@ Take as input two integers `dividend` and `divisor`, and output the `quotient` a
 Output:
 ```
 10
+0
+```
+#### Negative quotient
+Input:
+```
+-8
+2
+```
+
+Output:
+```
+-4
 0
 ```
 ### Division by zero
@@ -35,6 +52,8 @@ Output:
 2
 ```
 ### Negative numbers
+
+#### Dividend < 0 and Divisor > 0
 Input:
 ```
 -100
@@ -48,6 +67,7 @@ Output:
 ```
 Explanation: $-100 = -15\times 7 + 5$
 
+#### Dividend > 0 and Divisor < 0
 
 Input:
 ```
@@ -61,6 +81,7 @@ Output:
 27
 ```
 Explanation: $100 = -1\times -73 + 27$
+#### Dividend < 0 and Divisor < 0
 
 Input:
 ```
@@ -74,6 +95,7 @@ Output:
 4
 ```
 Explanation: $-100 = 8 \times -13 + 4$
+#### Dividend = Divisor < 0
 
 Input:
 ```
@@ -83,10 +105,10 @@ Input:
 
 Output:
 ```
-2
-5
+1
+0
 ```
-Explanation: $-5 = 2 \times -5 + 5$
+Explanation: $-5 = 1 \times -5 + 0$
 
 
 ## Pseudocode
@@ -117,15 +139,22 @@ def div(dividend, divisor):
 
     # calculate remainder
     remainder = dividend
-
-    # deal with negative numbers
-    if not negative and dvd_copy < 0:
-        return [quotient + 1, divisor - remainder]
-
+    
+    # add sign to quotient
     if negative:
         quotient = -quotient
-        if dvd_copy < 0:
-            return [quotient - 1, divisor - remainder]
+    
+    if remainder == 0:
         return [quotient, remainder]
+
+    if dvd_copy < 0:
+        remainder = divisor - remainder
+
+    if  negative and dvd_copy < 0:
+        quotient -= 1
+
+    if not negative and dvd_copy < 0:
+        quotient += 1
+
     return [quotient, remainder]
 ```
