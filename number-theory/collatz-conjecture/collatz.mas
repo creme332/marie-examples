@@ -1,0 +1,79 @@
+input
+store n
+
+loop,   load n / if n > 1, continue
+        output
+        subt one
+        skipcond 800
+        halt
+
+        jns mod_2
+        
+        load is_even
+        skipcond 800
+        jump three_n_plus_one
+        jump half_n
+
+/ checks the parity of n
+/ if n is even, set is_even = 1
+/ else set is_even = 0
+mod_2,  hex 0
+        load n 
+        store temp / temp = n
+        jump parity_loop
+
+parity_loop,    load temp
+                skipcond 400
+                jump check_if_temp_1
+                / temp is 0
+                load one
+                store is_even / is_even = 1
+                jumpi mod_2 
+
+check_if_temp_1,        load temp
+                        subt one
+                        skipcond 400
+                        jump dec_temp_by_two / if temp > 1, temp -=1
+                        / n is not even
+                        clear
+                        store is_even
+                        jumpi mod_2 
+
+/temp -= 2
+dec_temp_by_two,        load temp
+                        subt one
+                        subt one
+                        store temp
+                        jump parity_loop
+
+half_n, load n 
+        store temp
+        jump half_loop 
+
+half_loop, clear 
+            add temp 
+            add temp 
+            subt n 
+            skipcond 400
+            jump dec_temp
+            load temp
+            store n
+            jump loop
+
+dec_temp,   load temp
+            subt one
+            store temp
+            jump half_loop
+
+three_n_plus_one,   clear 
+                    add n 
+                    add n 
+                    add n 
+                    add one
+                    store n
+                    jump loop
+
+temp, dec 0
+n, dec 0
+one, dec 1
+is_even, dec 0
