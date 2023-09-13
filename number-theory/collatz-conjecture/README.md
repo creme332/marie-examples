@@ -53,3 +53,15 @@ For n = 100:
 2
 1
 ```
+## Pseudocode
+
+```python
+def solve(n):
+    print(n)
+    while (n != 1):
+        if n % 2 == 0:
+            n /= 2
+        else:
+            n = 3*n + 1
+        print(n)
+```
