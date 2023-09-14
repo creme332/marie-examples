@@ -1,0 +1,33 @@
+ORG 000 
+
+WHILE,      LOAD        STR_BASE    
+            ADD         ITR         
+            STORE       INDEX       / index = str_base + itr
+            LOADI       INDEX       / get the value at INDEX
+            SKIPCOND    400         / check value at INDEX
+            JUMP        DO          / else restart loop
+            HALT                    / if null char, end program
+
+DO,     Output                  / output value at ADDR
+        LOAD        ITR        
+        ADD         ONE         
+        STORE       ITR         / itr += 1
+        JUMP        WHILE       / jump to while
+
+        
+ONE,        DEC     1
+ITR,        DEC     0
+INDEX,      HEX     0
+STR_BASE,   HEX     10      / memory location of str
+STR,        HEX     48      / H
+            HEX     65      / E
+            HEX     6C      / L
+            HEX     6C      / L
+            HEX     6F      / O
+            HEX     20      / space
+            HEX     57      / W
+            HEX     6F      / O
+            HEX     72      / R
+            HEX     6C      / L
+            HEX     64      / D
+            HEX     0       / NULL char
