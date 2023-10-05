@@ -1,20 +1,20 @@
     / Fibonacci sequence
 	
-	/ enter value of n
-	input
-	store n
+/ enter value of n
+input
+store n
 
-	/ output first element	
-	load prev
-	output
-	
-	/ if n was 1 originally, exit else consider case 2
-	load n
-	subt one
-	store n
-	skipcond 400
-	jump case2
-	halt
+/ output first element	
+load prev
+output
+
+/ if n was 1 originally, exit else consider case 2
+load n
+subt one
+store n
+skipcond 400
+jump case2
+halt
 	
 	/ output second element
 case2, load next

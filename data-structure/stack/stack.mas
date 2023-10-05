@@ -1,0 +1,86 @@
+jns init_stack
+
+/ add element to stack
+load one
+store A
+jns push
+
+/ print stack
+jns print_stack
+
+halt
+
+/ initialise stack
+init_stack,	jns 0
+			load base
+			subt one
+            store top
+            jumpi init_stack
+
+/ push A on top of stack
+push,   hex 0
+        / check if stack empty
+        load base
+        subt top
+        skipcond 000
+        jump push_to_empty_stack / if base < top (stack empty)
+
+        / base < top => stack non-empty
+        / top of stack = A
+        load A
+        storei top
+        
+        / top++
+        load top
+        add one
+        store top
+
+        jumpi push
+
+push_to_empty_stack,    load A
+                        storei base
+
+                        / top = base
+                        load base
+                        store top
+
+                        jumpi push
+
+/ pop stack
+pop,    hex 0
+        load top
+        subt base
+        add one
+        skipcond 800
+        jumpi pop / if top < base (stack empty), do nothing
+
+        / optional step: reset content of memory location where pop occurs
+        clear 
+        storei top
+
+        / top--
+        load top
+        subt one
+        store top
+
+        jumpi pop
+
+/ pops all elements in stack and output each popped element
+print_stack, hex 0
+print_stack_loop,	load top
+                    subt base
+                    add one
+                    Skipcond 800 / if top >= base, output top of stack
+                    jumpi print_stack / if stack empty, return to caller
+
+                    / output top of stack
+                    loadi top
+                    Output
+                    / pop
+                    jns pop
+                    jump print_stack_loop
+
+one, dec 1
+A, dec 0 / aarameter for push subroutine
+base, hex 100 / address of base of stack
+top, hex 0 / address of top of stack. 

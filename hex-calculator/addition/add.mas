@@ -1,0 +1,100 @@
+main,   Clear
+        / input values to array1
+        store i
+        load arr1_start
+        store arr_ptr
+        jns input_array
+
+        / input values to array2
+        Clear
+        Store i
+        load arr2_start
+        store arr_ptr
+        jns input_array
+
+        / perform addition
+        jns addition_calculator
+
+        / output result
+        halt
+
+addition_calculator,    hex 0
+                        load n
+                        subt one
+                        store i / i = n - 1
+                        
+                        add arr1_start
+                        store arr_ptr
+                        
+                        jns start_adding
+                        jumpi addition_calculator
+
+start_adding, hex 0
+add_loop, 	load i
+			add one
+			Skipcond 800
+            jumpi start_adding
+			
+            / if i >= 0
+            / temp = arr1[i]
+            load arr1_start
+			add i
+            store arr_ptr
+            loadi arr_ptr
+            store temp
+            
+            / load arr2[i]
+            load arr2_start
+			add i
+            store arr_ptr
+            
+            / arr1[i] + arr2[i] + carry
+			loadi arr_ptr
+			add temp
+            add carry
+			store temp	
+			
+            / check if sum > 16
+            subt sixteen
+			skipcond 800 
+			
+            / load remaining to arr3
+            / update carry
+            load one
+            store carry	
+
+            jump add_loop
+            
+input_array, hex 0
+input_loop, load i 
+			subt n
+            
+            Skipcond 000
+			jumpi input_array
+            
+            input 
+            storei arr_ptr
+			
+            load arr_ptr
+			add one
+            store arr_ptr
+
+            load i
+            add one
+            store i
+            
+            jump input_loop
+
+/ constants
+n, dec 4 / size of arrays
+sixteen, dec 16
+one, dec 1
+arr1_start, hex 100 / stores first hex value
+arr2_start, hex 110 / stores second hex value
+arr3_start, hex 120 / stores sum of hex values
+
+/ variables
+carry, dec 0
+i, dec 0 
+temp, dec 0
+arr_ptr, hex 0
