@@ -1,0 +1,24 @@
+input 
+store n
+
+input
+store k
+
+jns n_mod_k
+load n 
+output
+halt
+
+/ calculates n mod k and saves result to n
+n_mod_k,    hex 0
+loop,   load n 
+        subt k
+        add one 
+        skipcond 800
+        jumpi n_mod_k
+        store n
+        jump loop
+
+one, dec 1
+n, dec 0
+k, dec 0
