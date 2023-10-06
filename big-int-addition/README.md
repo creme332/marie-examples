@@ -86,3 +86,22 @@ Output:
 1,456,789,993 + 2,552,789,993 = 4,009,579,986
 
 ## Pseudocode
+
+```python
+# input first number to an array1
+# input second number to an array2
+# array3 is an array of size n
+carry = 0
+for i in range(n-1, 0, -1):
+    sum = carry + array1[i] + array2[i]
+    if sum > 10:
+        array3[i] = sum - 10
+        carry = 1
+    else:
+        array3[i] = sum
+        carry = 0
+if carry > 0:
+    print(carry)
+for i in range(0, n):
+    print(array3[i])
+```
