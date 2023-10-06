@@ -1,26 +1,24 @@
-# marie-examples
+# marie-examples 🐣
 A compilation of programs written in MARIE Assembly Language. For each program, a description, some test cases, and the pseudocode are included.
 
 A summary of the programs implemented is shown below:
 ```
-basic-arithmetic/
+arithmetic/
+├─ addition of two large positive numbers
 ├─ division of any two integers with remainder and quotient
 ├─ modulo of any two positive integers
 ├─ multiplication of any two integers
-big-int-addition/
-├─ addition of two large positive numbers
 data-structure/
 ├─ array/
 │  ├─ binary-search
-│  ├─ io-operation
-│  ├─ median of an array
-│  ├─ sum  of an array
+│  ├─ input & output
+│  ├─ median
+│  ├─ sum of elements in an array
 ├─ stack/
 │  ├─ stack operations
-hello world/
-├─ print hello world
 misc/
-├─ two-sum/
+├─ two-sum
+├─ hello-world
 number-theory/
 ├─ collatz-conjecture
 ├─ euclidean-algorithm
