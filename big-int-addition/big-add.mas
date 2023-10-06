@@ -1,0 +1,181 @@
+/ input n
+input 
+store n 
+
+/ input first number
+load array1
+store input_base_add
+jns input_number
+
+/ input second number
+load array2
+store input_base_add
+jns input_number
+
+/ carry addition
+jns addition
+
+/ output result
+jns output_ans
+
+halt
+
+/ subroutine which inputs a number. parameter: input_base_add
+input_number,   hex 0
+                clear 
+                store i / i = 0
+                jump input_loop
+
+input_loop, load i
+            subt n 
+            skipcond 000
+            jumpi input_number
+
+            / if i < n, keep inputting digits
+            input 
+            store temp
+            
+            / calculate address where digit must be stored
+            load input_base_add
+            add i
+            store ptr
+
+            / store digit
+            load temp
+            storei ptr 
+
+            / i += 1
+            load i 
+            add one 
+            store i
+
+            jump input_loop
+
+addition,   hex 0
+            load n
+            subt one  
+            store i / i = n - 1
+            clear 
+            store carry / carry = 0
+            store sum / sum = 0
+
+            jns start_addition
+
+            / output remaining digits of answer
+
+
+            jumpi addition
+
+start_addition, hex 0
+addition_loop,  load i
+                add one
+                skipcond 800
+                jumpi start_addition / if n < 0, stop
+                
+                / when i >= 0, add digits at i-th index
+                
+                / load array1[i]
+                load i
+                add array1
+                store ptr
+                loadi ptr
+
+                store sum / sum = array1[i]
+
+                / load array2[i]
+                load i
+                add array2
+                store ptr
+                loadi ptr
+
+                / sum = array1[i] + array2[i] + carry
+                add sum
+                add carry
+                store sum 
+
+                / check if sum < 10
+                subt ten 
+                skipcond 000
+                jump sum_greater_than_ten
+                jump sum_less_than_ten
+
+sum_greater_than_ten,   load i
+                        add array3
+                        store ptr / ptr = array3 + i
+                        load sum
+                        subt ten
+                        storei ptr   / array3[i] = sum - 10
+
+                        / carry = 1
+                        load one
+                        store carry
+
+                        / i = i - 1
+                        load i 
+                        subt one 
+                        store i 
+
+                        jump addition_loop
+
+sum_less_than_ten,      load i
+                        add array3
+                        store ptr
+                        load sum
+                        storei ptr   / array3[i] = sum
+
+                        / carry = 0
+                        clear 
+                        store carry
+
+                        / i = i - 1
+                        load i 
+                        subt one 
+                        store i 
+
+                        jump addition_loop
+
+output_ans, hex 0 
+            clear 
+            store i / i = 0
+            / output carry if it is > 0
+            load carry
+            skipcond 800
+            jump output_loop
+
+            output
+            jump output_loop 
+
+
+output_loop, load i 
+            subt n 
+            skipcond 000
+            jumpi output_ans
+
+            load i
+            add array3
+            store ptr
+            loadi ptr 
+            output
+
+            load i 
+            add one
+            store i 
+            jump output_loop
+ 
+/ constants
+one, dec 1
+ten, dec 10
+array1, hex 200 / start address for first digit of first number
+array2, hex 500 / start address for first digit of second number
+array3, hex 800 /  start address for result
+
+/ If gap between array1, array2, and array3 is increased, n can be increased to numbers greater than 100
+
+/ variables
+n, dec 0
+input_base_add, hex 0
+carry, dec 0
+sum, dec 0
+ptr, hex 0 
+i, dec 0
+temp, dec 0
