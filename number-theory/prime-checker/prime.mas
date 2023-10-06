@@ -1,0 +1,74 @@
+input
+store n
+
+jns prime_checker
+load is_prime
+output
+halt
+
+prime_checker,  hex 0
+                / intialize variables
+                / i = 2
+                load two
+                store i
+
+                / is_prime = 1
+                load one
+                store is_prime
+
+                /  check if n < 2
+                load n 
+                subt two
+                skipcond 000
+                jump prime_loop
+                jump return_false / if n < 2, return false
+
+return_false,   clear
+                store is_prime
+                jumpi prime_checker
+
+prime_loop, load i 
+            subt n 
+            skipcond 000
+            jumpi prime_checker / if i >= n, exit
+            / if i < n
+            jns calc_n_mod_i
+            load n_mod_i
+            skipcond 800
+            jump return_false / if n % i == 0
+            
+            / if n % i != 0
+            / i += 1
+            load i
+            add one
+            store i
+
+            jump prime_loop
+
+/ calculates value of n % i and saves value to n_mod_i  
+calc_n_mod_i,   hex  0
+                / n_mod_i = n
+                load n 
+                store n_mod_i
+
+                jump mod_loop
+
+mod_loop,   load n_mod_i 
+            subt i
+            add one
+            skipcond 800
+            jumpi calc_n_mod_i
+            / if n_mod_i >= i 
+            subt one
+            store n_mod_i
+            jump mod_loop
+
+/constants
+two, dec 2
+one, dec 1
+
+/variables
+n_mod_i, dec 0 / value of n % i
+i, dec  2 / loop counter.
+n, dec 0 / user input
+is_prime, dec 1 / is number prime? 1 = True and 0 = False.
