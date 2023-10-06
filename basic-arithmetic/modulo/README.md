@@ -17,6 +17,12 @@ Input:
 ```
 Output: `1`
 
+Input:
+```
+12
+2
+```
+Output: `0`
 
 ## Pseudocode
 

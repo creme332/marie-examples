@@ -16,6 +16,9 @@ loop,   load n
         add one 
         skipcond 800
         jumpi n_mod_k
+        
+        / if n >= k, n  = n - k
+        subt one
         store n
         jump loop
 
